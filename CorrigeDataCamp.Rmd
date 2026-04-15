@@ -10,6 +10,44 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r}
-Sys.Date()
+library(stringr)
+library(stringi)
+lista_carpetas_alumnos <- list.files(path = "data/EntregaAlumnos")
+
+lista_carpetas_alumnos[1]
+
+#nombre_completo <- strsplit(split = "_", x = lista_carpetas_alumnos, fixed = T)
+apellidos <- str_split_i(lista_carpetas_alumnos, ", ", 1)
+nombres <- str_split_i(str_split_i(lista_carpetas_alumnos, ", ", 2), "_", 1)
+
+readLines("data/EntregaAlumnos/Adán Alegre, Alejandro_11814290_assignsubmission_file/puntos.txt")
+
+archivo <- file(paste0("data/EntregaAlumnos/",lista_carpetas_alumnos[10],"/puntos.txt"))
+
+linea <- readLines(archivo)
+close(archivo)
+
+
+leer_txt <- function(lista_carpetas_alumnos) {
+  lista_resultados <- list(length = length(lista_carpetas_alumnos))
+  for (i in 1:length(lista_carpetas_alumnos)) {
+      if (file.exists(paste0("data/EntregaAlumnos/",lista_carpetas_alumnos[i],"/puntos.txt"))) {
+        archivo <- file(paste0("data/EntregaAlumnos/",lista_carpetas_alumnos[i],"/puntos.txt"))
+        linea <- readLines(archivo, warn = F)
+        close(archivo)
+        lista_resultados[i] = suppressWarnings(as.integer(linea))
+      } else {
+        lista_resultados[i] = NA
+      }
+    }
+  return(lista_resultados)
+}
+
+lista_resultados <- leer_txt(lista_carpetas_alumnos)
 ```
+
+```{r}
+
+```
+
 
