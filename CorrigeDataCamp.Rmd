@@ -31,8 +31,8 @@ close(archivo)
 leer_txt <- function(lista_carpetas_alumnos) {
   lista_resultados <- list(length = length(lista_carpetas_alumnos))
   for (i in 1:length(lista_carpetas_alumnos)) {
-      if (file.exists(paste0("data/EntregaAlumnos/",lista_carpetas_alumnos[i],"/puntos.txt"))) {
-        archivo <- file(paste0("data/EntregaAlumnos/",lista_carpetas_alumnos[i],"/puntos.txt"))
+      if (file.exists(paste0("data/EntregaAlumnos/",lista_carpetas_alumnos[i],"/",lista_nombres_ficheros_txt[i]))) {
+        archivo <- file(paste0("data/EntregaAlumnos/",lista_carpetas_alumnos[i],"/",lista_nombres_ficheros_txt[i]))
         linea <- readLines(archivo, warn = F)
         close(archivo)
         lista_resultados[i] = suppressWarnings(as.integer(linea))
@@ -47,7 +47,42 @@ lista_resultados <- leer_txt(lista_carpetas_alumnos)
 ```
 
 ```{r}
+nombres_ficheros <- list.files(paste0("data/EntregaAlumnos/", lista_carpetas_alumnos,"/"))
 
+stri_detect_regex(nombres_ficheros,".txt")
+
+hallar_nombres <- function(lista_carpetas_alumnos) {
+  # 1. Inicializamos la lista correctamente (como vimos antes)
+  lista_nom_fichero <- vector("list", length(lista_carpetas_alumnos))
+  
+  # 2. Bucle corregido con 1:length()
+  for (i in 1:length(lista_carpetas_alumnos)) {
+    
+    # Construimos la ruta de la carpeta
+    ruta_carpeta <- paste0("data/EntregaAlumnos/", lista_carpetas_alumnos[i], "/")
+    
+    # 3. La magia de R: list.files busca SOLO los .txt automáticamente
+    # El patrón "\\.txt$" significa "que termine exactamente en .txt"
+    archivos_txt <- list.files(path = ruta_carpeta, pattern = "\\.txt$")
+    
+    # 4. Comprobamos si encontró algo
+    if (length(archivos_txt) > 0) {
+      # Guardamos el primer .txt que encuentre (o todos, si lo prefieres)
+      lista_nom_fichero[[i]] <- archivos_txt[1]
+    } else {
+      # Si no hay ningún .txt, guardamos NA para no romper el orden
+      lista_nom_fichero[[i]] <- NA
+    }
+  }
+  
+  # 5. El return va FUERA del bucle, al final de la función
+  return(lista_nom_fichero)
+}
+
+lista_nombres_ficheros_txt <- hallar_nombres(lista_carpetas_alumnos)
 ```
+
+
+
 
 
