@@ -82,6 +82,26 @@ hallar_nombres <- function(lista_carpetas_alumnos) {
 lista_nombres_ficheros_txt <- hallar_nombres(lista_carpetas_alumnos)
 ```
 
+```{r}
+library(tibble)
+
+evalua_df <- tibble(apellidos = apellidos, puntos = lista_resultados,NomFile = lista_nombres_ficheros_txt, Puntos = lista_contenido)
+
+```
+
+```{r}
+lista_contenido = list(length = length(lista_carpetas_alumnos))
+for (i in 1:length(lista_carpetas_alumnos)) {
+    if (file.exists(paste0("data/EntregaAlumnos/",lista_carpetas_alumnos[i],"/",lista_nombres_ficheros_txt[i]))) {
+      archivo <- file(paste0("data/EntregaAlumnos/",lista_carpetas_alumnos[i],"/",lista_nombres_ficheros_txt[i]))
+      linea <- readLines(archivo, warn = F)
+      close(archivo)
+      lista_contenido[i] = suppressWarnings(as.character(linea))
+    } else {
+      lista_resultados[i] = NA
+    }
+  }
+```
 
 
 
