@@ -113,7 +113,7 @@ library(readxl)
 df_alumnos <- read_excel("AlumnosTD25_26.xlsx")
 names(df_alumnos) <- c("nombres", "apellidos", "nom_usuario", "id", "correo")
 df_total <- df_alumnos %>% inner_join(evalua_df, by = "apellidos")
-
+write.xlsx(df_total,"AlumnosNotas.xlsx")
 ```
 
 
