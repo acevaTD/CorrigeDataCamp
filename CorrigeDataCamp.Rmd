@@ -14,36 +14,6 @@ library(stringr)
 library(stringi)
 lista_carpetas_alumnos <- list.files(path = "data/EntregaAlumnos")
 
-lista_carpetas_alumnos[1]
-
-#nombre_completo <- strsplit(split = "_", x = lista_carpetas_alumnos, fixed = T)
-apellidos <- str_split_i(lista_carpetas_alumnos, ", ", 1)
-nombres <- str_split_i(str_split_i(lista_carpetas_alumnos, ", ", 2), "_", 1)
-
-readLines("data/EntregaAlumnos/Adán Alegre, Alejandro_11814290_assignsubmission_file/puntos.txt")
-
-archivo <- file(paste0("data/EntregaAlumnos/",lista_carpetas_alumnos[10],"/puntos.txt"))
-
-linea <- readLines(archivo)
-close(archivo)
-
-
-leer_txt <- function(lista_carpetas_alumnos) {
-  lista_resultados <- list(length = length(lista_carpetas_alumnos))
-  for (i in 1:length(lista_carpetas_alumnos)) {
-      if (file.exists(paste0("data/EntregaAlumnos/",lista_carpetas_alumnos[i],"/",lista_nombres_ficheros_txt[i]))) {
-        archivo <- file(paste0("data/EntregaAlumnos/",lista_carpetas_alumnos[i],"/",lista_nombres_ficheros_txt[i]))
-        linea <- readLines(archivo, warn = F)
-        close(archivo)
-        lista_resultados[i] = suppressWarnings(as.integer(linea))
-      } else {
-        lista_resultados[i] = NA
-      }
-    }
-  return(lista_resultados)
-}
-
-lista_resultados <- leer_txt(lista_carpetas_alumnos)
 ```
 
 ```{r}
@@ -83,15 +53,37 @@ lista_nombres_ficheros_txt <- hallar_nombres(lista_carpetas_alumnos)
 ```
 
 ```{r}
-library(tibble)
+apellidos <- str_split_i(lista_carpetas_alumnos, ", ", 1)
+nombres <- str_split_i(str_split_i(lista_carpetas_alumnos, ", ", 2), "_", 1)
 
-evalua_df <- tibble(apellidos = apellidos, puntos = as.numeric(lista_resultados), NomFile = as.character(lista_nombres_ficheros_txt), Puntos = as.character(lista_contenido))
+readLines("data/EntregaAlumnos/Adán Alegre, Alejandro_11814290_assignsubmission_file/puntos.txt")
 
+archivo <- file(paste0("data/EntregaAlumnos/",lista_carpetas_alumnos[10],"/puntos.txt"))
+
+linea <- readLines(archivo)
+close(archivo)
+
+
+leer_txt <- function(lista_carpetas_alumnos) {
+  lista_resultados <- list(length = length(lista_carpetas_alumnos))
+  for (i in 1:length(lista_carpetas_alumnos)) {
+      if (file.exists(paste0("data/EntregaAlumnos/",lista_carpetas_alumnos[i],"/",lista_nombres_ficheros_txt[i]))) {
+        archivo <- file(paste0("data/EntregaAlumnos/",lista_carpetas_alumnos[i],"/",lista_nombres_ficheros_txt[i]))
+        linea <- readLines(archivo, warn = F)
+        close(archivo)
+        lista_resultados[i] = suppressWarnings(as.integer(linea))
+      } else {
+        lista_resultados[i] = NA
+      }
+    }
+  return(lista_resultados)
+}
+
+lista_resultados <- leer_txt(lista_carpetas_alumnos)
 ```
 
 ```{r}
-library(writexl)
-lista_contenido = list(length = length(lista_carpetas_alumnos))
+lista_contenido <- list(length = length(lista_carpetas_alumnos))
 for (i in 1:length(lista_carpetas_alumnos)) {
     if (file.exists(paste0("data/EntregaAlumnos/",lista_carpetas_alumnos[i],"/",lista_nombres_ficheros_txt[i]))) {
       archivo <- file(paste0("data/EntregaAlumnos/",lista_carpetas_alumnos[i],"/",lista_nombres_ficheros_txt[i]))
@@ -102,7 +94,18 @@ for (i in 1:length(lista_carpetas_alumnos)) {
       lista_resultados[i] = NA
     }
 }
+```
 
+
+```{r}
+library(tibble)
+
+evalua_df <- tibble(apellidos = apellidos, puntos = as.numeric(lista_resultados), NomFile = as.character(lista_nombres_ficheros_txt), Puntos = as.character(lista_contenido))
+
+```
+
+```{r}
+library(writexl)
 write_xlsx(evalua_df, "NotasRIntermedio.xlsx")
 
 ```
